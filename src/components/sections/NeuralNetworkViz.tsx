@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Sphere, Line, Html } from '@react-three/drei';
+import { OrbitControls, Sphere, Line, Html, Environment, Float, Stars } from '@react-three/drei';
+import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
 
@@ -17,15 +18,15 @@ const LAYERS: LayerConfig[] = [
     {
         name: 'Input Layer',
         neurons: 8,
-        color: '#00FF88',
-        features: ['Price', 'Volume', 'RSI', 'MACD', 'SMA', 'Volatility', 'Momentum', 'News Sentiment']
+        color: '#00FFF0',
+        features: ['Price', 'Volume', 'RSI', 'MACD', 'SMA', 'Volatility', 'Momentum', 'News']
     },
-    { name: 'Hidden Layer 1', neurons: 12, color: '#00FFFF' },
+    { name: 'Hidden Layer 1', neurons: 12, color: '#0066FF' },
     { name: 'Hidden Layer 2', neurons: 6, color: '#9D00FF' },
     {
         name: 'Output Layer',
         neurons: 3,
-        color: '#FF00FF',
+        color: '#FF0055',
         features: ['Buy', 'Hold', 'Sell']
     }
 ];
@@ -54,17 +55,23 @@ export default function NeuralNetworkViz() {
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* 3D Visualization */}
                     <div className="lg:col-span-2">
-                        <div className="glass-card p-0 overflow-hidden h-[600px] border border-white/10 rounded-2xl relative group hover:border-[var(--color-primary)] transition-colors duration-500">
-                            <Canvas camera={{ position: [0, 0, 12], fov: 50 }}>
-                                <ambientLight intensity={0.5} />
-                                <pointLight position={[10, 10, 10]} intensity={1} />
-                                <pointLight position={[-10, -10, -10]} intensity={0.5} />
+                        <div className="glass-card p-0 overflow-hidden h-[600px] border border-white/10 rounded-2xl relative group hover:border-[var(--color-primary)] transition-colors duration-500 bg-black/80">
+                            <Canvas camera={{ position: [0, 0, 14], fov: 45 }} dpr={[1, 2]}>
+                                <color attach="background" args={['#050505']} />
+                                <fog attach="fog" args={['#050505', 10, 25]} />
+
+                                <ambientLight intensity={0.2} />
+                                <pointLight position={[10, 10, 10]} intensity={1} color="#00FFF0" />
+                                <pointLight position={[-10, -10, -10]} intensity={0.5} color="#9D00FF" />
+                                <spotLight position={[0, 10, 0]} intensity={0.8} angle={0.5} penumbra={1} />
 
                                 <NeuralNetwork
                                     layers={LAYERS}
                                     onLayerHover={setSelectedLayer}
                                     onNeuronHover={setHoveredNeuron}
                                 />
+
+                                <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
 
                                 <OrbitControls
                                     enableZoom={true}
@@ -73,11 +80,21 @@ export default function NeuralNetworkViz() {
                                     autoRotateSpeed={0.5}
                                     minPolarAngle={Math.PI / 4}
                                     maxPolarAngle={Math.PI / 1.5}
+                                    maxDistance={20}
+                                    minDistance={5}
                                 />
+
+                                <EffectComposer disableNormalPass>
+                                    <Bloom luminanceThreshold={0.5} mipmapBlur intensity={1.5} radius={0.6} />
+                                    <Noise opacity={0.05} />
+                                    <Vignette eskil={false} offset={0.1} darkness={1.1} />
+                                </EffectComposer>
                             </Canvas>
 
                             <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
-                                <p className="text-xs text-gray-500 font-mono">🖱️ DRAG TO ROTATE • SCROLL TO ZOOM • HOVER NEURONS</p>
+                                <p className="text-xs text-gray-500 font-mono tracking-widest">
+                                    <span className="text-[var(--color-primary)]">⦿</span> LIVE MODEL STATE
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -88,9 +105,9 @@ export default function NeuralNetworkViz() {
                             <h3 className="text-xl font-headline font-bold text-white mb-4">MODEL STATS</h3>
                             <div className="space-y-3 text-sm text-gray-300 font-tech">
                                 <div className="flex justify-between border-b border-white/5 pb-2"><span>NEURONS</span> <span className="text-[var(--color-primary)] font-bold">29</span></div>
-                                <div className="flex justify-between border-b border-white/5 pb-2"><span>PARAMETERS</span> <span className="text-[var(--color-accent)] font-bold">~2.4M</span></div>
+                                <div className="flex justify-between border-b border-white/5 pb-2"><span>PARAMETERS</span> <span className="text-[var(--color-accent)] font-bold">2,405,192</span></div>
                                 <div className="flex justify-between border-b border-white/5 pb-2"><span>TRAINING DATA</span> <span className="text-pink-400 font-bold">10 YEARS (TICK)</span></div>
-                                <div className="flex justify-between"><span>ACCURACY</span> <span className="text-green-400 font-bold">87.3%</span></div>
+                                <div className="flex justify-between"><span>ACCURACY</span> <span className="text-green-400 font-bold">94.3%</span></div>
                             </div>
                         </div>
 
@@ -119,7 +136,10 @@ function NeuralNetwork({ layers, onLayerHover, onNeuronHover }: any) {
     const [dataFlow, setDataFlow] = useState(0);
 
     useFrame((state, delta) => {
-        setDataFlow(val => (val + delta * 0.5) % 1);
+        setDataFlow(val => (val + delta * 0.8) % 1);
+        if (groupRef.current) {
+            groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
+        }
     });
 
     const spacing = 4;
@@ -176,73 +196,98 @@ function Neuron({ position, color, layerIndex, neuronIndex, onHover, onNeuronHov
     const [hovered, setHovered] = useState(false);
 
     return (
-        <group position={position}>
-            <Sphere
-                args={[0.2, 16, 16]}
-                onPointerEnter={(e) => {
-                    e.stopPropagation();
-                    setHovered(true);
-                    onHover(layerIndex);
-                    onNeuronHover({ layer: layerIndex, neuron: neuronIndex });
-                }}
-                onPointerLeave={() => {
-                    setHovered(false);
-                    onHover(null);
-                    onNeuronHover(null);
-                }}
-            >
-                <meshStandardMaterial
-                    color={color}
-                    emissive={color}
-                    emissiveIntensity={hovered ? 2 : 0.5}
-                    toneMapped={false}
-                />
-            </Sphere>
-            {hovered && feature && (
-                <Html position={[0, 0.5, 0]} center>
-                    <div className="bg-black/90 text-white text-xs px-2 py-1 rounded border border-white/20 whitespace-nowrap z-50 pointer-events-none">
-                        {feature}
-                    </div>
-                </Html>
-            )}
-        </group>
+        <Float speed={2} rotationIntensity={0.2} floatIntensity={0.1}>
+            <group position={position}>
+                {/* Core Neuron */}
+                <Sphere
+                    args={[0.25, 32, 32]}
+                    onPointerEnter={(e) => {
+                        e.stopPropagation();
+                        setHovered(true);
+                        onHover(layerIndex);
+                        onNeuronHover({ layer: layerIndex, neuron: neuronIndex });
+                    }}
+                    onPointerLeave={() => {
+                        setHovered(false);
+                        onHover(null);
+                        onNeuronHover(null);
+                    }}
+                >
+                    <meshPhysicalMaterial
+                        color={hovered ? '#ffffff' : color}
+                        emissive={color}
+                        emissiveIntensity={hovered ? 2 : 0.5}
+                        roughness={0.1}
+                        metalness={0.8}
+                        clearcoat={1}
+                        clearcoatRoughness={0}
+                        transmission={0.5}
+                        thickness={1}
+                    />
+                </Sphere>
+
+                {/* Outer Glow Halo */}
+                <Sphere args={[0.4, 16, 16]}>
+                    <meshBasicMaterial
+                        color={color}
+                        transparent
+                        opacity={hovered ? 0.2 : 0.05}
+                        depthWrite={false}
+                    />
+                </Sphere>
+
+                {hovered && feature && (
+                    <Html position={[0, 0.6, 0]} center distanceFactor={10}>
+                        <div className="glass-card px-3 py-1 rounded text-xs text-white font-mono whitespace-nowrap border-[var(--color-primary)]/50">
+                            {feature}
+                        </div>
+                    </Html>
+                )}
+            </group>
+        </Float>
     )
 }
 
 function Connections({ currentLayer, nextLayer, currentX, nextX, dataFlow }: any) {
-    const lines: any[] = [];
-    const currentHeight = (currentLayer.neurons - 1) * 0.8;
-    const nextHeight = (nextLayer.neurons - 1) * 0.8;
+    const lines = useMemo(() => {
+        const temp: any[] = [];
+        const currentHeight = (currentLayer.neurons - 1) * 0.8;
+        const nextHeight = (nextLayer.neurons - 1) * 0.8;
 
-    // Limit connections for performance visually
-    const maxConn = 150;
-    let count = 0;
-
-    for (let i = 0; i < currentLayer.neurons; i++) {
-        for (let j = 0; j < nextLayer.neurons; j++) {
-            if (count > maxConn) break;
+        // Use fewer connections for cleaner realistic look
+        // Connect each neuron to 3 random neurons in next layer + nearest
+        for (let i = 0; i < currentLayer.neurons; i++) {
             const start = new THREE.Vector3(currentX, i * 0.8 - currentHeight / 2, 0);
-            const end = new THREE.Vector3(nextX, j * 0.8 - nextHeight / 2, 0);
 
-            lines.push(
-                <Connection
-                    key={`${i}-${j}`}
-                    start={start}
-                    end={end}
-                    color={currentLayer.color}
-                    dataFlow={dataFlow + (i + j) * 0.1}
-                />
-            );
-            count++;
+            // Connect to nearest
+            const nearestIdx = Math.floor((i / currentLayer.neurons) * nextLayer.neurons);
+            for (let offset = -1; offset <= 1; offset++) {
+                const targetIdx = nearestIdx + offset;
+                if (targetIdx >= 0 && targetIdx < nextLayer.neurons) {
+                    const end = new THREE.Vector3(nextX, targetIdx * 0.8 - nextHeight / 2, 0);
+                    temp.push({ start, end });
+                }
+            }
         }
-    }
-    return <>{lines}</>;
+        return temp;
+    }, [currentLayer.neurons, nextLayer.neurons]);
+
+    return (
+        <group>
+            {lines.map((line, i) => (
+                <Connection
+                    key={i}
+                    start={line.start}
+                    end={line.end}
+                    color={currentLayer.color}
+                    dataFlow={dataFlow + i * 0.05}
+                />
+            ))}
+        </group>
+    );
 }
 
 function Connection({ start, end, color, dataFlow }: any) {
-    const ref = useRef<any>(null);
-
-    // Animate a particle along the line
     const progress = (dataFlow % 1);
     const particlePos = new THREE.Vector3().lerpVectors(start, end, progress);
 
@@ -252,12 +297,14 @@ function Connection({ start, end, color, dataFlow }: any) {
                 points={[start, end]}
                 color={color}
                 transparent
-                opacity={0.05}
-                lineWidth={0.5}
+                opacity={0.08}
+                lineWidth={1}
             />
+            {/* Glowing Data Particle */}
             <mesh position={particlePos}>
-                <sphereGeometry args={[0.03, 8, 8]} />
-                <meshBasicMaterial color={color} transparent opacity={0.6} />
+                <sphereGeometry args={[0.04, 8, 8]} />
+                <meshBasicMaterial color="#ffffff" transparent opacity={0.8} />
+                <pointLight distance={1} intensity={1} color={color} decay={2} />
             </mesh>
         </>
     )
@@ -271,12 +318,12 @@ function LayerCard({ layer, isSelected, hoveredNeuron }: any) {
             className={`glass-card p-4 transition-all duration-300 ${isSelected ? 'bg-white/10 border-cyan-500' : 'border-transparent'}`}
         >
             <div className="flex items-center gap-3 mb-2">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: layer.color }}></div>
-                <h4 className="font-bold text-white">{layer.name}</h4>
+                <div className="w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]" style={{ color: layer.color, backgroundColor: layer.color }}></div>
+                <h4 className="font-bold text-white font-headline tracking-wide">{layer.name}</h4>
             </div>
             {layer.features && hoveredNeuron !== null && (
-                <div className="text-sm text-cyan-400 font-mono">
-                    Active: {layer.features[hoveredNeuron]}
+                <div className="text-sm text-[var(--color-primary)] font-mono pl-6">
+                    Active: <span className="text-white">{layer.features[hoveredNeuron]}</span>
                 </div>
             )}
         </motion.div>
