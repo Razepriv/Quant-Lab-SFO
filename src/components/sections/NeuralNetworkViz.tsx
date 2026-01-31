@@ -84,7 +84,7 @@ export default function NeuralNetworkViz() {
                                     minDistance={5}
                                 />
 
-                                <EffectComposer disableNormalPass>
+                                <EffectComposer enableNormalPass={false}>
                                     <Bloom luminanceThreshold={0.5} mipmapBlur intensity={1.5} radius={0.6} />
                                     <Noise opacity={0.05} />
                                     <Vignette eskil={false} offset={0.1} darkness={1.1} />
