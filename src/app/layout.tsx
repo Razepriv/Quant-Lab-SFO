@@ -27,6 +27,8 @@ export const metadata: Metadata = {
   description: "Next-generation algorithmic trading fund powered by AI and deep learning.",
 };
 
+import Providers from "@/components/Providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,14 +39,16 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${orbitron.variable} ${rajdhani.variable} antialiased selection:bg-cyan-500/30 selection:text-cyan-100`}
       >
-        <SmoothScroll>
-          <CustomCursor />
-          <Navbar />
-          <CanvasLayout />
-          <main className="relative z-10 w-full">
-            {children}
-          </main>
-        </SmoothScroll>
+        <Providers>
+          <SmoothScroll>
+            <CustomCursor />
+            <Navbar />
+            <CanvasLayout />
+            <main className="relative z-10 w-full">
+              {children}
+            </main>
+          </SmoothScroll>
+        </Providers>
       </body>
     </html>
   );
