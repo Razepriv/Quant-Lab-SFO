@@ -25,6 +25,11 @@ const rajdhani = Rajdhani({
 export const metadata: Metadata = {
   title: "Quant Lab SFO | AI-Driven Algorithmic Trading",
   description: "Next-generation algorithmic trading fund powered by AI and deep learning.",
+  icons: {
+    icon: '/logo.webp',
+    shortcut: '/logo.webp',
+    apple: '/logo.webp',
+  }
 };
 
 import Providers from "@/components/Providers";

@@ -74,11 +74,12 @@ export default function SentimentDashboard() {
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className="text-4xl md:text-5xl font-headline font-bold mb-4 bg-gradient-to-r from-[#00FFF0] to-[#0066FF] text-transparent bg-clip-text"
+                        className="text-4xl md:text-5xl font-headline font-bold mb-4 text-[var(--color-primary)]"
                     >
-                        AI Market Sentiment Engine
+                        AI MARKET SENTIMENT ENGINE
                     </motion.h2>
-                    <p className="text-gray-400 text-lg">
+                    <div className="w-20 h-1 bg-[var(--color-accent)] mx-auto rounded-full mb-6" />
+                    <p className="text-gray-400 text-lg font-tech tracking-wider uppercase">
                         Real-time market intelligence powered by FinBERT AI
                     </p>
                 </div>
@@ -94,29 +95,29 @@ export default function SentimentDashboard() {
                     </div>
 
                     {/* Overview Panel */}
-                    <div className="glass-card p-8 h-fit sticky top-24">
-                        <h3 className="text-2xl font-bold mb-6 text-white">Market Pulse</h3>
+                    <div className="glass-card p-8 h-fit sticky top-24 border border-white/10 rounded-2xl">
+                        <h3 className="text-2xl font-headline font-bold mb-6 text-white">MARKET PULSE</h3>
 
                         <div className="text-center mb-8">
-                            <div className="text-6xl mb-2">
+                            <div className="text-6xl mb-4">
                                 {displayData.market_overview.overall_sentiment === 'bullish' ? '🟢' :
                                     displayData.market_overview.overall_sentiment === 'bearish' ? '🔴' : '🟡'}
                             </div>
-                            <div className="text-4xl font-bold text-[#00FFF0] mb-2">
+                            <div className="text-5xl font-tech font-bold text-[var(--color-primary)] mb-2">
                                 {displayData.market_overview.overall_score}%
                             </div>
-                            <div className="text-sm text-gray-400 uppercase tracking-wider">
+                            <div className="text-xs text-gray-400 font-mono uppercase tracking-widest">
                                 Overall Sentiment
                             </div>
                         </div>
 
                         <div className="space-y-4 border-t border-white/10 pt-6">
-                            <div className="flex justify-between">
-                                <span className="text-gray-400">Fear & Greed</span>
-                                <span className="text-[#00BPFF] font-bold">72 (Greed)</span>
+                            <div className="flex justify-between font-tech">
+                                <span className="text-gray-400">FEAR & GREED</span>
+                                <span className="text-[var(--color-secondary)] font-bold">72 (GREED)</span>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-400">VIX Level</span>
+                            <div className="flex justify-between font-tech">
+                                <span className="text-gray-400">VIX LEVEL</span>
                                 <span className="text-white font-bold">14.2</span>
                             </div>
                         </div>

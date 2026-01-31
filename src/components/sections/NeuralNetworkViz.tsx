@@ -35,17 +35,18 @@ export default function NeuralNetworkViz() {
     const [hoveredNeuron, setHoveredNeuron] = useState<{ layer: number; neuron: number } | null>(null);
 
     return (
-        <section className="py-24 relative overflow-hidden bg-[#050510]">
+        <section className="py-24 relative overflow-hidden bg-transparent border-t border-white/5">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-16">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className="text-4xl md:text-5xl font-headline font-bold mb-4 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 text-transparent bg-clip-text"
+                        className="text-4xl md:text-5xl font-headline font-bold mb-4 text-[var(--color-primary)]"
                     >
-                        Neural Network Architecture
+                        NEURAL NETWORK ARCHITECTURE
                     </motion.h2>
-                    <p className="text-gray-400 text-lg">
+                    <div className="w-20 h-1 bg-[var(--color-accent)] mx-auto rounded-full mb-6" />
+                    <p className="text-gray-400 text-lg font-tech tracking-wider uppercase">
                         Interactive visualization of our Deep Learning Alpha Model
                     </p>
                 </div>
@@ -53,7 +54,7 @@ export default function NeuralNetworkViz() {
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* 3D Visualization */}
                     <div className="lg:col-span-2">
-                        <div className="glass-card p-0 overflow-hidden h-[600px] border border-cyan-500/20 relative">
+                        <div className="glass-card p-0 overflow-hidden h-[600px] border border-white/10 rounded-2xl relative group hover:border-[var(--color-primary)] transition-colors duration-500">
                             <Canvas camera={{ position: [0, 0, 12], fov: 50 }}>
                                 <ambientLight intensity={0.5} />
                                 <pointLight position={[10, 10, 10]} intensity={1} />
@@ -76,20 +77,20 @@ export default function NeuralNetworkViz() {
                             </Canvas>
 
                             <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
-                                <p className="text-xs text-gray-500">🖱️ Drag to rotate • Scroll to zoom • Hover neurons</p>
+                                <p className="text-xs text-gray-500 font-mono">🖱️ DRAG TO ROTATE • SCROLL TO ZOOM • HOVER NEURONS</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Layer Info */}
                     <div className="space-y-4">
-                        <div className="glass-card p-6 border-l-4 border-l-cyan-500">
-                            <h3 className="text-xl font-bold text-white mb-2">Model Stats</h3>
-                            <div className="space-y-2 text-sm text-gray-300">
-                                <div className="flex justify-between"><span>Neurons</span> <span className="text-cyan-400">29</span></div>
-                                <div className="flex justify-between"><span>Parameters</span> <span className="text-purple-400">~2.4M</span></div>
-                                <div className="flex justify-between"><span>Training Data</span> <span className="text-pink-400">10 Years (Tick)</span></div>
-                                <div className="flex justify-between"><span>Accuracy</span> <span className="text-green-400">87.3%</span></div>
+                        <div className="glass-card p-8 border-l-4 border-[var(--color-primary)] rounded-r-2xl">
+                            <h3 className="text-xl font-headline font-bold text-white mb-4">MODEL STATS</h3>
+                            <div className="space-y-3 text-sm text-gray-300 font-tech">
+                                <div className="flex justify-between border-b border-white/5 pb-2"><span>NEURONS</span> <span className="text-[var(--color-primary)] font-bold">29</span></div>
+                                <div className="flex justify-between border-b border-white/5 pb-2"><span>PARAMETERS</span> <span className="text-[var(--color-accent)] font-bold">~2.4M</span></div>
+                                <div className="flex justify-between border-b border-white/5 pb-2"><span>TRAINING DATA</span> <span className="text-pink-400 font-bold">10 YEARS (TICK)</span></div>
+                                <div className="flex justify-between"><span>ACCURACY</span> <span className="text-green-400 font-bold">87.3%</span></div>
                             </div>
                         </div>
 

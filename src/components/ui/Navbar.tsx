@@ -26,12 +26,12 @@ export default function Navbar() {
         >
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="relative w-10 h-10 overflow-hidden rounded-full border border-white/20 group-hover:border-[var(--color-primary)] transition-colors">
+                    <div className="relative w-20 h-20 transition-transform group-hover:scale-110">
                         <Image
                             src="/logo.webp"
                             alt="Quant Lab SFO"
                             fill
-                            className="object-cover"
+                            className="object-contain drop-shadow-[0_0_8px_rgba(0,255,240,0.5)]"
                         />
                     </div>
                     <div className="flex flex-col">

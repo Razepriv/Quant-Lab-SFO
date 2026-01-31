@@ -34,6 +34,13 @@ export default function Hero() {
                     initial="hidden"
                     animate="visible"
                 >
+                    <motion.div variants={itemVariants} className="flex justify-center mb-6">
+                        <div className="relative w-32 h-32 md:w-40 md:h-40">
+                            <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full" />
+                            <img src="/logo.webp" alt="Quant Lab Logo" className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_20px_rgba(0,255,240,0.4)]" />
+                        </div>
+                    </motion.div>
+
                     <motion.h2
                         variants={itemVariants}
                         className="text-[var(--color-primary)] font-tech tracking-[0.2em] text-sm md:text-base mb-4 uppercase"

@@ -103,10 +103,12 @@ export default function AIChat() {
                 onClick={() => setIsOpen(!isOpen)}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                whileHover={{ scale: 1.1 }}
-                className="fixed bottom-6 right-6 z-[100] w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full shadow-lg shadow-cyan-500/50 flex items-center justify-center text-white text-2xl"
+                whileHover={{ scale: 1.1, boxShadow: "0 0 30px var(--color-primary)" }}
+                className="fixed bottom-6 right-6 z-[100] w-14 h-14 bg-black/80 backdrop-blur-md border border-[var(--color-primary)] rounded-full shadow-[0_0_15px_var(--color-primary)] flex items-center justify-center text-[var(--color-primary)] text-2xl group"
             >
-                {isOpen ? '✕' : '💬'}
+                <span className="drop-shadow-[0_0_5px_var(--color-primary)] group-hover:drop-shadow-[0_0_10px_var(--color-primary)] transition-all">
+                    {isOpen ? '✕' : '💬'}
+                </span>
             </motion.button>
 
             <AnimatePresence>
@@ -115,15 +117,18 @@ export default function AIChat() {
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="fixed bottom-24 right-6 z-[100] w-[90vw] md:w-96 h-[500px] glass-card flex flex-col overflow-hidden border border-cyan-500/30 bg-black/90"
+                        className="fixed bottom-24 right-6 z-[100] w-[90vw] md:w-96 h-[500px] glass-card flex flex-col overflow-hidden border border-[var(--color-primary)]/30 rounded-2xl"
                     >
-                        <div className="p-4 bg-gradient-to-r from-cyan-900/50 to-blue-900/50 border-b border-gray-700 flex items-center gap-3">
-                            <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center">🤖</div>
+                        <div className="p-4 bg-[var(--color-primary)]/10 border-b border-white/10 flex items-center gap-3 backdrop-blur-md">
+                            <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-black font-bold">AI</div>
                             <div>
-                                <h3 className="font-bold text-white text-sm">Quant AI Agent</h3>
-                                <div className="flex items-center gap-1">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span className="text-[10px] text-gray-400">Online</span>
+                                <h3 className="font-headline font-bold text-white text-sm tracking-wide">QUANT AI AGENT</h3>
+                                <div className="flex items-center gap-2">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    </span>
+                                    <span className="text-[10px] text-gray-400 font-mono uppercase">System Online</span>
                                 </div>
                             </div>
                         </div>
@@ -131,14 +136,14 @@ export default function AIChat() {
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
                             {messages.map((msg) => (
                                 <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[85%] p-3 rounded-xl text-sm ${msg.role === 'user'
-                                            ? 'bg-cyan-600 text-white rounded-br-none'
-                                            : 'bg-gray-800 text-gray-200 rounded-bl-none'
+                                    <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
+                                        ? 'bg-[var(--color-primary)] text-black font-medium rounded-br-none'
+                                        : 'bg-white/10 text-gray-200 border border-white/5 rounded-bl-none'
                                         }`}>
                                         {msg.content}
                                         {msg.sources && msg.sources.length > 0 && (
-                                            <div className="mt-2 text-xs text-cyan-300 border-t border-white/10 pt-1">
-                                                Sources: {msg.sources.map((s: any) => s.metadata?.source).join(', ')}
+                                            <div className="mt-2 text-xs text-[var(--color-primary)] border-t border-black/10 pt-2 font-mono">
+                                                SOURCE: {msg.sources.map((s: any) => s.metadata?.source).join(', ')}
                                             </div>
                                         )}
                                     </div>
@@ -146,21 +151,21 @@ export default function AIChat() {
                             ))}
                             {isLoading && (
                                 <div className="flex justify-start">
-                                    <div className="bg-gray-800 p-3 rounded-xl flex gap-1">
-                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100"></div>
-                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></div>
+                                    <div className="bg-white/10 p-4 rounded-2xl rounded-bl-none flex gap-1">
+                                        <div className="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-bounce"></div>
+                                        <div className="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-bounce delay-100"></div>
+                                        <div className="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-bounce delay-200"></div>
                                     </div>
                                 </div>
                             )}
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <div className="p-3 border-t border-gray-700 bg-black/50">
+                        <div className="p-4 border-t border-white/10 bg-black/40">
                             <div className="flex gap-2">
                                 <input
-                                    className="flex-1 bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-white focus:border-cyan-500 outline-none"
-                                    placeholder="Ask about our strategy..."
+                                    className="flex-1 bg-black/50 border border-white/10 rounded px-4 py-3 text-sm text-white focus:border-[var(--color-primary)] outline-none transition-colors"
+                                    placeholder="Ask about detailed strategies..."
                                     value={input}
                                     onChange={e => setInput(e.target.value)}
                                     onKeyDown={e => e.key === 'Enter' && handleSend()}
@@ -168,7 +173,7 @@ export default function AIChat() {
                                 <button
                                     onClick={handleSend}
                                     disabled={!input.trim() || isLoading}
-                                    className="bg-cyan-600 px-3 py-2 rounded text-white disabled:opacity-50"
+                                    className="bg-[var(--color-primary)] px-4 py-2 rounded text-black font-bold disabled:opacity-50 hover:bg-[#a6fff9] transition-colors"
                                 >
                                     ➤
                                 </button>
